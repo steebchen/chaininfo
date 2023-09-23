@@ -1,7 +1,7 @@
 import '@/modules/moralis'
 import { formatNumber } from '@/modules/format'
 import Image from 'next/image'
-import { getAddressData } from '@/data/address'
+import { getAddressDataCache } from '@/data/address-cache'
 
 export const revalidate = 3600 // 1 hour
 
@@ -11,7 +11,11 @@ export default async function HomePage({
   params: { slug: string }
 }) {
   console.log('render address page')
-  const { tokens: balances, nativeBalance } = await getAddressData(slug)
+
+  // for testing, you can switch out getAddressDataCache with getAddressData
+  // getAddressDataCache uses `cache` from react with `revalidate`, which does not seem to work
+  // getAddressDataUnstable uses unstable_cache from next, which does work
+  const { tokens: balances, nativeBalance } = await getAddressDataCache(slug)
   const hideSpam = true
   const showPrecise = false
 
