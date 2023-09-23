@@ -1,17 +1,16 @@
-import { cache } from 'react'
 import { EvmChain } from '@moralisweb3/common-evm-utils'
 import Moralis from 'moralis'
 import { notFound } from 'next/navigation'
+import { unstable_cache } from 'next/cache'
 
-export const revalidate = 3600 // 1 hour
+export const revalidate = 10
 
-export const getAddressData = cache(async (address: string) => {
+export const getAddressData = unstable_cache(async (address: string) => {
   if (!address || !/(0x[a-fA-F0-9]{40})/.test(address)) {
-    console.log('not found')
     return notFound()
   }
 
-  console.log('getting address data', address)
+  console.log('getAddressData', address)
 
   const chain = EvmChain.ETHEREUM
 
@@ -26,7 +25,7 @@ export const getAddressData = cache(async (address: string) => {
   })
 
   return {
-    tokens: tokens.result,
-    nativeBalance: nativeBalance.result,
+    tokens: tokens.toJSON(),
+    nativeBalance: nativeBalance.toJSON(),
   }
 })

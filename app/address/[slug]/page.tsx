@@ -10,9 +10,10 @@ export default async function HomePage({
 }: {
   params: { slug: string }
 }) {
+  console.log('render address page')
   const { tokens: balances, nativeBalance } = await getAddressData(slug)
   const hideSpam = true
-  const showPrecise = true
+  const showPrecise = false
 
   return (
     <main className="p-5">
@@ -20,7 +21,7 @@ export default async function HomePage({
       <h2>Native
         Balance:
         <span>
-          {formatNumber(parseFloat(nativeBalance?.balance.ether || '0'), showPrecise ? 18 : undefined)}
+          {formatNumber(parseFloat(nativeBalance?.balance || '0') / 10 ** 18, showPrecise ? 18 : undefined)}
         </span>
         ETH
       </h2>
@@ -29,12 +30,12 @@ export default async function HomePage({
         <p className="text-gray-300">No tokens found</p>
       )}
       <ul>
-        {balances?.filter((i) => (hideSpam ? !i.token?.possibleSpam : true)).map((balance) => (
-          <li key={balance.token!.contractAddress.lowercase}
-              className={`flex items-center gap-2 ${balance.token!.possibleSpam ? 'opacity-30' : ''}`}>
-            {balance.token!.name} ({balance.token!.symbol}): {formatNumber(parseFloat(balance.amount.toString()) / 10 ** balance.token!.decimals, showPrecise ? balance.token!.decimals : undefined)}
-            {balance.token!.logo && <Image src={balance.token!.logo} width={32} height={32} alt={balance.token!.name}/>}
-            {!balance.token!.logo && <span className="p-4 bg-gray-300 rounded-full"/>}
+        {balances?.filter((i) => (hideSpam ? !i.possible_spam : true)).map((item) => (
+          <li key={`${item.token_address}${item.symbol}`}
+              className={`flex items-center gap-2 ${item.possible_spam ? 'opacity-30' : ''}`}>
+            {item.name} ({item.symbol}): {formatNumber(parseFloat(item.balance + '') / 10 ** item.decimals, showPrecise ? item.decimals : undefined)}
+            {item.logo && <Image src={item.logo} width={32} height={32} alt={item.name}/>}
+            {!item.logo && <span className="p-4 bg-gray-300 rounded-full"/>}
           </li>
         ))}
       </ul>

@@ -2,7 +2,7 @@ const EXTRA_DIGITS = 5
 
 export function formatNumber(v?: number, digits?: number): string {
   return (v || 0).toLocaleString('en', {
-    minimumFractionDigits: digits ? 0 : calcDigits(v ?? 0),
+    minimumFractionDigits: digits ?? calcDigits(v ?? 0),
   })
 }
 
